@@ -101,6 +101,12 @@ psql trivia
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO myuser;
 ```
 
+### Alternatively, grant ownership of tables to user `myuser`
+```
+alter table categories owner to myuser;
+alter table questions owner to myuser;
+```
+
 ### Run tests
 
 ```
@@ -112,4 +118,8 @@ python -m test_flaskr
 
 ```
 curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"searchTerm": "country"}'
+```
+
+```
+curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"question": "Test question", "answer": "Test answer", "category": 1, "difficulty": 1}'
 ```

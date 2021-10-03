@@ -1,4 +1,4 @@
-import os
+import os, sys, json
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -140,9 +140,13 @@ def create_app(test_config=None):
   '''
   @app.route("/questions", methods=["POST"])
   def create_or_search_questions():
-    body = request.get_json()
+    # body = request.get_json()
+    body = json.loads(request.data.decode('utf-8'))
+
+    print(body)
 
     if not body:
+      print(sys.exc_info())
       abort(400)
 
     new_question = body.get('question', None)
@@ -166,7 +170,9 @@ def create_app(test_config=None):
         }
       )
     else:
-      if (not new_question) or (not new_answer) or (not new_difficulty) or (new_category):
+
+      if (not new_question) or (not new_answer) or (not new_difficulty) or (not new_category):
+        print(sys.exc_info())
         abort(400)
 
       try:
@@ -175,7 +181,7 @@ def create_app(test_config=None):
           answer = new_answer, 
           category= new_category,
           difficulty = new_difficulty
-          )
+        )
         new_question.insert()
 
         return jsonify(
@@ -185,6 +191,7 @@ def create_app(test_config=None):
           }
         )
       except:
+        print(sys.exc_info())
         abort(422)
 
   '''

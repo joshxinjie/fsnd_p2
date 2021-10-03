@@ -58,8 +58,26 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
         self.assertEqual(data["totalQuestions"], 1)
-        # self.assertEqual(data["questions"]["answer"], "Uruguay")
-
+        first_question = data["questions"][0]
+        self.assertEqual(first_question["answer"], "Uruguay")
+        self.assertEqual(first_question["category"], 6)
+        self.assertEqual(first_question["difficulty"], 4)
+        self.assertEqual(first_question["id"], 11)
+        self.assertEqual(first_question["question"], "Which country won the first ever soccer World Cup in 1930?")
+    
+    def test_create_question(self):
+        res = self.client().post(
+            "/questions",\
+            json={
+                "question": "Test question",
+                "answer": "Test answer",
+                "category": 1,
+                "difficulty": 1
+            }
+        )
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["success"], True)
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
