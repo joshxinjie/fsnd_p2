@@ -50,3 +50,66 @@ By making notes ahead of time, you will practice the core skill of being able to
 
 
 >View the [README within ./frontend for more details.](./frontend/README.md)
+
+## Setup
+
+For pop-os 18.04
+
+### Set Up Python Virtual Environment
+
+Create a new virtual environment:
+```
+python3 -m virtualenv fsndp2
+```
+
+Activate the environment:
+```
+source fsndp2/bin/activate
+```
+
+Install the pip dependencies
+```
+pip install -r requirements.txt
+```
+
+### Set Up the `trivia` and `trivia_test` Database
+
+Start postgres:
+```
+sudo -u postgres -i
+```
+
+Create both databases:
+```
+createdb trivia
+psql trivia < /home/xinlee/Documents/fsnd_p2/backend/trivia.psql
+psql trivia_test < /home/xinlee/Documents/fsnd_p2/backend/trivia.psql
+```
+
+### Run Flask App
+
+```
+export FLASK_APP=flaskr
+export FLASK_ENV=development # enables debug mode
+flask run
+```
+
+### If needed, grant privileges on all tables to user `myuser`
+```
+sudo -u postgres -i
+psql trivia
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO myuser;
+```
+
+### Run tests
+
+```
+python -m test_flaskr
+```
+
+
+### Sample Curl Tests
+
+```
+curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"searchTerm": "country"}'
+```
