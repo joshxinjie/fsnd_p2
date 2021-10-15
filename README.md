@@ -308,8 +308,8 @@ The API will return three error types when requests fail:
 
 #### POST /questions
 - General
- - If the new question and answer text, difficulty and category score are provided, a new question will be created.
- - If a search term is given instead, it will return any questions for whom the search term is a substring of the question.
+  - If the new question and answer text, difficulty and category score are provided, a new question will be created.
+  - If a search term is given instead, it will return any questions for whom the search term is a substring of the question.
 - Request Parameters (For Creating Question): **None**
 - Request Headers (For Creating Question):
   - **`question`** String
@@ -351,9 +351,9 @@ The API will return three error types when requests fail:
 #### GET /categories/{category_id}/questions
 - General
   - Retrieves questions based on the given category id.
-- Request Parameters (For Creating Question):
+- Request Parameters:
   - **`category_id`** Integer
-- Request Headers (For Creating Question):
+- Request Headers:
   - **None**
 - Sample: `curl http://127.0.0.1:5000/categories/1/questions`
 
@@ -400,8 +400,8 @@ The API will return three error types when requests fail:
 #### POST /quizzes
 - General
   - Play the quiz. This endpoint should take category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions.
-- Request Parameters (For Creating Question): **None**
-- Request Headers (For Creating Question):
+- Request Parameters: **None**
+- Request Headers:
   - **`previous_questions`** Array of Integers
   - **`quiz_category`** JSON
     - **`type`** String
