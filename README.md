@@ -106,7 +106,13 @@ POSTGRES_USER=replace with your username
 POSTGRES_PASSWORD=replace with your password
 ```
 
-### 5. Run Flask App
+e.g.)
+```
+POSTGRES_USER=myuser
+POSTGRES_PASSWORD=password
+```
+
+### 5. Run Flask App Development Server
 In a terminal from the `backend` directory, run:
 ```
 export FLASK_APP=flaskr
@@ -159,10 +165,13 @@ The API will return three error types when requests fail:
 
 ### Endpoints
 
-#### GET /categories
+---
 
+#### GET /categories
 - General:
   - Returns a list of questions categories.
+- Request Parameters: **None**
+- Request Headers: **None**
 - Sample: `curl http://127.0.0.1:5000/categories`
 
 ```
@@ -179,11 +188,15 @@ The API will return three error types when requests fail:
 }
 ```
 
-#### GET /questions
+---
 
+#### GET /questions
 - General:
-  - Returns a list of questions.
+  - Returns a list of questions, number of total questions, current category, categories.
   - Results are paginated in groups of 10. Include a request argument to choose page number, starting from 1.
+- Request Parameters:
+  - **`page`** Integer
+- Request Headers: **None**
 - Sample: 
   - `curl http://127.0.0.1:5000/questions`
   - `curl http://127.0.0.1:5000/questions?page=2`
@@ -275,9 +288,13 @@ The API will return three error types when requests fail:
 }
 ```
 
+---
+
 #### DELETE /questions/{question_id}
 - General
   - Deletes the question of the given ID if it exists. Returns the id of the deleted question, success value.
+- Request Parameters: **None**
+- Request Headers: **None**
 - Sample: `curl http://127.0.0.1:5000/questions/27 -X DELETE`
 
 ```
@@ -287,10 +304,18 @@ The API will return three error types when requests fail:
 }
 ```
 
+---
+
 #### POST /questions
 - General
- - If a new question and answer text, difficulty and category score are provided, a new question will be created.
+ - If the new question and answer text, difficulty and category score are provided, a new question will be created.
  - If a search term is given instead, it will return any questions for whom the search term is a substring of the question.
+- Request Parameters (For Creating Question): **None**
+- Request Headers (For Creating Question):
+  - **`question`** String
+  - **`answer`** String
+  - **`category`** Integer
+  - **`difficulty`** Integer
 - Sample: `curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"question": "Test question", "answer": "Test answer", "category": 1, "difficulty": 1}'`
 
 ```
@@ -299,7 +324,9 @@ The API will return three error types when requests fail:
   "success": true
 }
 ```
-
+- Request Parameters (For Searching): **None**
+- Request Headers (For Searching):
+  - **`searchTerm`** String
 - Sample: `curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"searchTerm": "country"}'`
 
 ```
@@ -319,9 +346,15 @@ The API will return three error types when requests fail:
 }
 ```
 
+---
+
 #### GET /categories/{category_id}/questions
 - General
   - Retrieves questions based on the given category id.
+- Request Parameters (For Creating Question):
+  - **`category_id`** Integer
+- Request Headers (For Creating Question):
+  - **None**
 - Sample: `curl http://127.0.0.1:5000/categories/1/questions`
 
 ```
@@ -362,10 +395,18 @@ The API will return three error types when requests fail:
 }
 ```
 
+---
+
 #### POST /quizzes
 - General
   - Play the quiz. This endpoint should take category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions.
-- Sample: `curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"previous_questions": [1,2,3,4,5,20], "quiz_category" : {"type" : "Science", "id" : "1"}}'`
+- Request Parameters (For Creating Question): **None**
+- Request Headers (For Creating Question):
+  - **`previous_questions`** Array of Integers
+  - **`quiz_category`** JSON
+    - **`type`** String
+    - **`id`** Integer
+- Sample: `curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"previous_questions": [1,2,3,4,5,20], "quiz_category" : {"type" : "Science", "id" : 1}}'`
 
 ```
 {

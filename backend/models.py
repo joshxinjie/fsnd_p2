@@ -11,7 +11,6 @@ POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
 
 database_name = "trivia"
 database_path = "postgres://{}:{}@{}/{}".format(POSTGRES_USER,POSTGRES_PASSWORD,'localhost:5432', database_name)
-# database_path = "postgres://{}:{}@{}/{}".format('myuser','password','localhost:5432', database_name)
 
 print(database_path)
 
