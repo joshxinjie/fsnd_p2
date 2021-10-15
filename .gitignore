@@ -130,3 +130,6 @@ dmypy.json
 
 # Virtual environment
 fsndp2/
+
+# node packages
+frontend/node_modules/

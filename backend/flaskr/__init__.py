@@ -1,4 +1,4 @@
-import os, sys, json
+import os, sys, json, random
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -116,6 +116,25 @@ def create_app(test_config=None):
   TEST: When you click the trash icon next to a question, the question will be removed.
   This removal will persist in the database and when you refresh the page. 
   '''
+  @app.route("/questions/<int:question_id>", methods=["DELETE"])
+  def delete_question(question_id):
+    question = Question.query.filter(Question.id == question_id).one_or_none()
+
+    if question is None:
+      abort(404)
+
+    try:
+      question.delete()
+
+      return jsonify(
+        {
+          'success': True,
+          'questionID': question_id
+        }
+      )
+    except:
+      print(sys.exc_info())
+      abort(422)
 
   '''
   @TODO: 
@@ -140,10 +159,8 @@ def create_app(test_config=None):
   '''
   @app.route("/questions", methods=["POST"])
   def create_or_search_questions():
-    # body = request.get_json()
-    body = json.loads(request.data.decode('utf-8'))
-
-    print(body)
+    body = request.get_json()
+    # body = json.loads(request.data.decode('utf-8'))
 
     if not body:
       print(sys.exc_info())
@@ -202,6 +219,32 @@ def create_app(test_config=None):
   categories in the left column will cause only questions of that 
   category to be shown. 
   '''
+  @app.route("/categories/<int:category_id>/questions", methods=["GET"])
+  def retrieve_category_questions(category_id):
+    questions = Question.\
+      query.\
+      filter(
+        Question.category == category_id
+      ).\
+      order_by(Question.id).\
+      all()
+
+    current_questions = paginate_questions(request, questions)
+
+    if len(current_questions) == 0:
+      abort(404)
+
+    category_id_name = Category.query.filter(Category.id == category_id).all()
+    category_name = [category.format()['type'] for category in category_id_name][0]
+
+    return jsonify(
+      {
+        'success': True,
+        'questions': current_questions,
+        'totalQuestions': len(questions),
+        'currentCategory': category_name
+      }
+    )
 
 
   '''
@@ -215,12 +258,77 @@ def create_app(test_config=None):
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
   '''
+  @app.route("/quizzes", methods=["POST"])
+  def play_quiz():
+    body = request.get_json()
+    # body = json.loads(request.data.decode('utf-8'))
+
+    if not body:
+      print(sys.exc_info())
+      abort(400)
+
+    previous_questions = body.get('previous_questions', None)
+    quiz_category = body.get('quiz_category', None)
+
+    quiz_query = Question.query
+
+    if quiz_category:
+      # Fix error in UI that reduces category if by 1
+      quiz_category["id"] = int(quiz_category["id"]) + 1
+      quiz_query = quiz_query.filter(Question.category == str(quiz_category['id']))
+    if previous_questions:
+      quiz_query = quiz_query.filter(Question.id.notin_(previous_questions))
+    
+    suitable_questions = quiz_query.all()
+
+    if len(suitable_questions) == 0:
+      abort(400)
+
+    random_question = random.choice(suitable_questions)
+    formatted_question = random_question.format()
+
+    return jsonify(
+      {
+        "success": True,
+        "question": formatted_question
+      }
+    )
 
   '''
   @TODO: 
   Create error handlers for all expected errors 
   including 404 and 422. 
   '''
+
+  @app.errorhandler(400)
+  def bad_request(error):
+    return jsonify(
+      {
+        "success": False,
+        "error": 400,
+        "message": "bad request"
+      }
+    ), 400
+  
+  @app.errorhandler(404)
+  def not_found(error):
+    return jsonify(
+      {
+        "success": False,
+        "error": 404,
+        "message": "resource not found"
+      }
+    ), 404
+
+  @app.errorhandler(422)
+  def unprocessable(error):
+    return jsonify(
+      {
+        "success": False,
+        "error": 422,
+        "message": "unprocessable"
+      }
+    ), 422
   
   return app
 
